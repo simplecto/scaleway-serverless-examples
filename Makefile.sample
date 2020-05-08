@@ -1,0 +1,26 @@
+REGISTRY := <your registry>>
+ACCESS_KEY := <your access key>
+SCW_SECRET_TOKEN := <your scaleway secret token>
+IMAGE := pyweb
+
+
+.PHONY: help
+help:
+	cat Makefile
+
+.PHONY: login
+login:
+		docker login $(REGISTRY) -u nologin -p $(SCW_SECRET_TOKEN)
+
+.PHONY: push
+push: build
+		docker tag $(IMAGE):latest $(REGISTRY)/$(IMAGE):latest	
+		docker push $(REGISTRY)/$(IMAGE):latest
+
+.PHONY: build
+build:
+	docker build -t $(IMAGE):latest .
+
+.PHONY: run
+run:
+	docker run --rm -it -p 8000:8000 -e PORT=8000 $(IMAGE):latest
